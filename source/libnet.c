@@ -2352,18 +2352,26 @@ FREE_SOCKET:
  */
 void neighbour_free_neigh(struct neighbour_info *neigh_info)
 {
+        CNL_LOG_ERROR("Enter neigh_info=%p neigh_count=%d neigh_capacity=%d neigh_arr=%p\n",neigh_info,neigh_info->neigh_count,neigh_info->neigh_capacity,neigh_info->neigh_arr);
+        
         while (0 != neigh_info->neigh_count) {
-                free(neigh_info->neigh_arr[neigh_info->neigh_count-1].local);
-                neigh_info->neigh_arr[neigh_info->neigh_count-1].local = NULL;
+                int i=neigh_info->neigh_count-1;
 
-                free(neigh_info->neigh_arr[neigh_info->neigh_count-1].mac);
-                neigh_info->neigh_arr[neigh_info->neigh_count-1].mac = NULL;
+                CNL_LOG_ERROR("Before freeing index=%d local=%p\n",i,neigh_info->neigh_arr[i].local);
+                free(neigh_info->neigh_arr[i].local);
+                neigh_info->neigh_arr[i].local = NULL;
 
-                free(neigh_info->neigh_arr[neigh_info->neigh_count-1].ifname);
-                neigh_info->neigh_arr[neigh_info->neigh_count-1].ifname = NULL;
+                CNL_LOG_ERROR("Before freeing index=%d mac=%p\n",i,neigh_info->neigh_arr[i].mac);
+                free(neigh_info->neigh_arr[i].mac);
+                neigh_info->neigh_arr[i].mac = NULL;
+
+                CNL_LOG_ERROR("Before freeing index=%d ifname=%p\n",i,neigh_info->neigh_arr[i].ifname);
+                free(neigh_info->neigh_arr[i].ifname);
+                neigh_info->neigh_arr[i].ifname = NULL;
 
                 neigh_info->neigh_count--;
         }
+        CNL_LOG_ERROR("Exit neigh_info=%p neigh_count=%d neigh_capacity=%d neigh_arr=%p\n",neigh_info,neigh_info->neigh_count,neigh_info->neigh_capacity,neigh_info->neigh_arr);
         free(neigh_info->neigh_arr);
         free(neigh_info);
 }
