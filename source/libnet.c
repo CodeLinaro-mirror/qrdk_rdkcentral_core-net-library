@@ -34,6 +34,15 @@
 #include "libnet_util.h"
 #include "libnet.h"
 
+void log_to_file(const char *message) {
+    FILE *log_file = fopen("/rdklogs/logs/neighbour_debug.log", "a");
+    if (log_file) {
+        fprintf(log_file, "%s\n", message);
+        fflush(log_file);
+        fclose(log_file);
+    }
+}
+
 struct neighbour_cb_data {
         struct neighbour_info *neigh_info;
         struct nl_sock *sock;
@@ -2352,27 +2361,35 @@ FREE_SOCKET:
  */
 void neighbour_free_neigh(struct neighbour_info *neigh_info)
 {
-        CNL_LOG_ERROR("Enter neigh_info=%p neigh_count=%d neigh_capacity=%d neigh_arr=%p\n",neigh_info,neigh_info->neigh_count,neigh_info->neigh_capacity,neigh_info->neigh_arr);
+        char log_msg[256];
+        snprintf(log_msg, sizeof(log_msg),"Enter neigh_info=%p neigh_count=%d neigh_capacity=%d neigh_arr=%p\n",neigh_info,neigh_info->neigh_count,neigh_info->neigh_capacity,neigh_info->neigh_arr);
+        log_to_file(log_msg);
         
         while (0 != neigh_info->neigh_count) {
                 int i=neigh_info->neigh_count-1;
 
-                CNL_LOG_ERROR("Before freeing index=%d local=%p\n",i,neigh_info->neigh_arr[i].local);
+                snprintf(log_msg, sizeof(log_msg),"Before freeing index=%d local=%p\n",i,neigh_info->neigh_arr[i].local);
+                log_to_file(log_msg);
                 free(neigh_info->neigh_arr[i].local);
                 neigh_info->neigh_arr[i].local = NULL;
 
-                CNL_LOG_ERROR("Before freeing index=%d mac=%p\n",i,neigh_info->neigh_arr[i].mac);
+                snprintf(log_msg, sizeof(log_msg),"Before freeing index=%d mac=%p\n",i,neigh_info->neigh_arr[i].mac);
+                log_to_file(log_msg);
                 free(neigh_info->neigh_arr[i].mac);
                 neigh_info->neigh_arr[i].mac = NULL;
 
-                CNL_LOG_ERROR("Before freeing index=%d ifname=%p\n",i,neigh_info->neigh_arr[i].ifname);
+                snprintf(log_msg, sizeof(log_msg),"Before freeing index=%d ifname=%p\n",i,neigh_info->neigh_arr[i].ifname);
+                log_to_file(log_msg);
                 free(neigh_info->neigh_arr[i].ifname);
                 neigh_info->neigh_arr[i].ifname = NULL;
 
                 neigh_info->neigh_count--;
         }
-        CNL_LOG_ERROR("Exit neigh_info=%p neigh_count=%d neigh_capacity=%d neigh_arr=%p\n",neigh_info,neigh_info->neigh_count,neigh_info->neigh_capacity,neigh_info->neigh_arr);
+        snprintf(log_msg, sizeof(log_msg),"Exit neigh_info=%p neigh_count=%d neigh_capacity=%d neigh_arr=%p\n",neigh_info,neigh_info->neigh_count,neigh_info->neigh_capacity,neigh_info->neigh_arr);
+        log_to_file(log_msg);
+        log_to_file("Before freeing neigh_info->neigh_arr");
         free(neigh_info->neigh_arr);
+        log_to_file("Before freeing neigh_info");
         free(neigh_info);
 }
 
